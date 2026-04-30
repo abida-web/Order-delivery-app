@@ -10,6 +10,7 @@ interface Order {
   product: string;
   customerName: string;
   customerPhone: string;
+  address: string; // ✅ Add this line
   status: string;
   isSeen: boolean;
   [key: string]: any; // For any additional fields
