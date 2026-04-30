@@ -5,9 +5,10 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> }, // ✅ Changed to Promise
 ) {
   try {
     // Get session
@@ -18,7 +19,7 @@ export async function GET(
     }
 
     // Get id from params
-    const { id } = await params;
+    const { id } = await params; // ✅ Already has await
 
     // Validate id
     if (!id) {
@@ -34,10 +35,10 @@ export async function GET(
       with: {
         shop: {
           with: {
-            owner: true, // Include shop owner if needed
+            owner: true,
           },
         },
-        deriver: true, // Include driver if needed
+        deriver: true,
       },
     });
 
@@ -56,13 +57,14 @@ export async function GET(
     );
   }
 }
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> }, // ✅ Changed to Promise
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
   const { status } = await request.json();
-  const { id } = await params;
+  const { id } = await params; // ✅ Already has await
 
   const shopOwner = await db.query.shops.findFirst({
     where: eq(shops.ownerId, session?.user.id),
@@ -85,23 +87,26 @@ export async function PATCH(
     .set({ status, updatedAt: new Date() })
     .where(eq(orders.id, id))
     .returning();
+
   revalidatePath("/dashboard/orders");
+
   return NextResponse.json(
     { success: true, order: updateOrder[0] },
     { status: 200 },
   );
 }
+
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> }, // ✅ Changed to Promise
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
-  const { status } = await request.json();
   const { id } = await params;
 
   const shopOwner = await db.query.shops.findFirst({
     where: eq(shops.ownerId, session?.user.id),
   });
+
   if (!shopOwner) {
     return NextResponse.json({ error: "Shop not found" }, { status: 404 });
   }
@@ -113,6 +118,8 @@ export async function DELETE(
   if (!order) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
+
   const removeOrder = await db.delete(orders).where(eq(orders.id, id));
+
   return NextResponse.json({ success: true }, { status: 201 });
 }
