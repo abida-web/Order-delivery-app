@@ -17,7 +17,7 @@ export async function GET() {
     where: eq(shops.ownerId, session?.user.id),
   });
   const driver = await db.query.drivers.findFirst({
-    where: eq(drivers.shopId, shop?.id),
+    where: eq(drivers.?shopId, shop?.id),
   });
 
   if (!shop) {

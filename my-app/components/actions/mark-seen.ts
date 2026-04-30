@@ -7,7 +7,9 @@ import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
-export async function markAsSeen(ordersToUpdate) {
+export async function markAsSeen(
+  ordersToUpdate: (typeof orders.$inferSelect)[],
+) {
   try {
     // Handle both single order and array of orders
     const orderIds = Array.isArray(ordersToUpdate)
@@ -45,7 +47,6 @@ export async function markAsSeen(ordersToUpdate) {
     return { success: true };
   } catch (error) {
     console.error("Error marking orders as seen:", error);
-    return { success: false, error: error.message };
   }
 }
 // In mark-seen.ts

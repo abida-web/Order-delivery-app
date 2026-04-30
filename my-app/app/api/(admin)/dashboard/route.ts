@@ -15,7 +15,7 @@ export async function GET() {
   });
 
   const allOrders = await db.query.orders.findMany({
-    where: eq(orders.shopId, shop?.id),
+    where: eq(orders?.shopId, shop?.id),
     with: {
       shop: true,
     },

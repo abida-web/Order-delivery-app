@@ -73,7 +73,7 @@ const Driver = () => {
     return price * quantity;
   };
   const router = useRouter();
-  async function handleChangeStatus(status: string, orderId) {
+  async function handleChangeStatus(status: string, orderId: string) {
     try {
       const res = await fetch(`/api/driver/orders/${orderId}`, {
         method: "PATCH",
