@@ -16,7 +16,7 @@ interface Order {
 }
 
 interface OrdersResponse {
-  orders?: Order[] | { orders: Order[] };
+  orders: Order[];
   totalPage?: number;
 }
 
@@ -41,7 +41,7 @@ const Orders = () => {
       setTotalPages(data?.totalPage || 1);
 
       // Safely get orders array
-      const ordersArray = data?.orders?.orders || data?.orders || [];
+      const ordersArray = data?.orders || [];
 
       const unseenOrders = ordersArray.filter(
         (order: Order) => order.isSeen === false,
@@ -63,11 +63,11 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [fetchOrders]); // Added fetchOrders to dependency array
+  }, [fetchOrders]);
 
   // Get all orders array safely
   const orders = useMemo(() => {
-    return (data?.orders?.orders || data?.orders || []) as Order[];
+    return data?.orders || [];
   }, [data]);
 
   // Get unique statuses from orders
@@ -188,7 +188,7 @@ const Orders = () => {
         </div>
       )}
 
-      {/* Pagination Controls - Fixed and Styled */}
+      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-8 pt-4 border-t border-gray-800">
           <button
