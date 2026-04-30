@@ -8,20 +8,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }, // ✅ Changed to Promise
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    // Get session
     const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get id from params
-    const { id } = await params; // ✅ Already has await
+    const { id } = await params;
 
-    // Validate id
     if (!id) {
       return NextResponse.json(
         { error: "Order ID is required" },
@@ -29,7 +26,6 @@ export async function GET(
       );
     }
 
-    // Fetch order with relations
     const order = await db.query.orders.findFirst({
       where: eq(orders.id, id),
       with: {
@@ -42,12 +38,10 @@ export async function GET(
       },
     });
 
-    // Check if order exists
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Return the order
     return NextResponse.json(order);
   } catch (error) {
     console.error("Error fetching order:", error);
@@ -60,11 +54,11 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }, // ✅ Changed to Promise
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
   const { status } = await request.json();
-  const { id } = await params; // ✅ Already has await
+  const { id } = await params;
 
   const shopOwner = await db.query.shops.findFirst({
     where: eq(shops.ownerId, session?.user.id),
@@ -98,7 +92,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }, // ✅ Changed to Promise
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
   const { id } = await params;
