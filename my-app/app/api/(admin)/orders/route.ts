@@ -10,28 +10,43 @@ export async function GET(req: Request) {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
   const { searchParams } = await new URL(req.url);
-  const page = Number(searchParams.get("page"));
+  const page = Number(searchParams.get("page")) || 1; // Default to 1 if not provided
   const limit = 4;
   const offset = (page - 1) * limit;
+
   const shop = await db.query.shops.findFirst({
     where: eq(shops.ownerId, session.user.id),
   });
-  const allOrders = await db.query.orders.findMany({
-    where: eq(orders.shopId, shop?.id),
 
+  if (!shop) {
+    return NextResponse.json({ error: "Shop not found" }, { status: 404 });
+  }
+
+  // Get paginated orders
+  const allOrders = await db.query.orders.findMany({
+    where: eq(orders.shopId, shop.id),
     orderBy: (orders, { desc }) => [desc(orders.createdAt)],
     limit,
     offset,
   });
 
-  const totalPage = Math.ceil(allOrders.length / limit);
+  // Get total count of orders
+  const totalOrdersResult = await db
+    .select({ count: count() })
+    .from(orders)
+    .where(eq(orders.shopId, shop.id));
+
+  const totalOrders = totalOrdersResult[0]?.count || 0;
+  const totalPage = Math.ceil(totalOrders / limit);
+
   return NextResponse.json(
     {
       orders: allOrders,
       shop: shop,
       page,
-      totalPage,
+      totalPage, // Now this will be correct
     },
     { status: 200 },
   );

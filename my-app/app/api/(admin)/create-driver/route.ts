@@ -6,7 +6,6 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { z } from "zod";
-
 export async function GET() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
@@ -17,7 +16,7 @@ export async function GET() {
     where: eq(shops.ownerId, session?.user.id),
   });
   const driver = await db.query.drivers.findFirst({
-    where: eq(drivers.?shopId, shop?.id),
+    where: eq(drivers.shopId, shop?.id), // ✅ Fixed: removed "?" before shopId
   });
 
   if (!shop) {

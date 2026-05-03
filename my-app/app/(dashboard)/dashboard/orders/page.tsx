@@ -189,36 +189,34 @@ const Orders = () => {
         </div>
       )}
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 mt-8 pt-4 border-t border-gray-800">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage((prev) => prev - 1)}
-            className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-              page === 1
-                ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                : "bg-amber-500 text-white hover:bg-amber-600"
-            }`}
-          >
-            Previous
-          </button>
-          <span className="text-gray-300 font-medium">
-            Page {page} of {totalPages}
-          </span>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage((prev) => prev + 1)}
-            className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-              page === totalPages
-                ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                : "bg-amber-500 text-white hover:bg-amber-600"
-            }`}
-          >
-            Next
-          </button>
-        </div>
-      )}
+      {/* Pagination Controls - Always show */}
+      <div className="flex justify-center items-center gap-4 mt-8 pt-4 border-t border-gray-800">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((prev) => prev - 1)}
+          className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+            page === 1
+              ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+              : "bg-amber-500 text-white hover:bg-amber-600"
+          }`}
+        >
+          Previous
+        </button>
+        <span className="text-gray-300 font-medium">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((prev) => prev + 1)}
+          className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+            page === totalPages
+              ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+              : "bg-amber-500 text-white hover:bg-amber-600"
+          }`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
